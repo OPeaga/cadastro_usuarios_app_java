@@ -1,6 +1,7 @@
 package com.users_ph.project_user.service;
 
 import com.users_ph.project_user.entities.User;
+import com.users_ph.project_user.exceptions.RecursoNaoEncontradoException;
 import com.users_ph.project_user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> buscarPorId(Integer id){
-        return userRepository.findById(id);
+    public User buscarPorId(Integer id){
+        return userRepository.findById(id).orElseThrow(
+                () -> new RecursoNaoEncontradoException("Produto com ID " + id + " não encontrado")
+        );
     }
 
     public User salvarUsuario(User user){
@@ -27,6 +30,11 @@ public class UserService {
     }
 
     public void deletarUsuario(Integer id){
+
+        if (!userRepository.existsById(id)){
+            throw new RecursoNaoEncontradoException("Produto com ID " + id + " não encontrado para deletar.");
+        }
+
         userRepository.deleteById(id);
     }
 }

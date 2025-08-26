@@ -1,8 +1,10 @@
 package com.users_ph.project_user.controller;
 
 import com.users_ph.project_user.entities.User;
+import com.users_ph.project_user.exceptions.RecursoNaoEncontradoException;
 import com.users_ph.project_user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,12 +21,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> buscarUsuario(@PathVariable Integer id) {
-        return userService.buscarPorId(id).map(
-                ResponseEntity::ok
-        ).orElse(
-                ResponseEntity.notFound().build()
-        );
+    public ResponseEntity<?> buscarUsuario(@PathVariable Integer id) {
+        try{
+            User user = userService.buscarPorId(id);
+            return ResponseEntity.ok(user);
+        }
+        catch ( RecursoNaoEncontradoException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PostMapping

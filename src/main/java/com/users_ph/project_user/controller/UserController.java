@@ -22,13 +22,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarUsuario(@PathVariable Integer id) {
-        try{
-            User user = userService.buscarPorId(id);
-            return ResponseEntity.ok(user);
-        }
-        catch ( RecursoNaoEncontradoException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        User user = userService.buscarPorId(id);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping
